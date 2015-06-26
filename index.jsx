@@ -60,7 +60,8 @@ const PhoneExt = React.createClass({
   },
 
   changeField(e) {
-    if (e.target.value.slice(-1) === 'x') {
+    if (e.key === 'x') {
+      this.refs.mask.mask.backspace()
       this.enableExtension(e)
     } else {
       let stateChange = {}
@@ -92,10 +93,25 @@ const PhoneExt = React.createClass({
 
     return (
       <form onSubmit={this.submit}>
-        <input style={{ fontSize: 24 }}
-               name='phone'
-               value={this.state.phone}
-               onChange={this.changeField} />
+        <MaskedInput style={{ fontSize: 24 }}
+                     ref='mask'
+                     pattern="xxx xxx-xxxx"
+                     formatCharacters={{
+                       'x': {
+                         validate: (char) => { return /[x\d]/.test(char) },
+                         format: (char) => {
+                           console.log(char)
+                           if (char === 'x') {
+                             return ''
+                           } else {
+                             return char
+                           }
+                         }
+                       }
+                     }}
+                     name="phone"
+                     value={this.state.phone}
+                     onChange={this.changeField} />
         <span style={{ marginLeft: 5, marginRight: 20 }}>{extField}</span>
 
         <button type="submit">Submit</button>
